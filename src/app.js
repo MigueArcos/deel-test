@@ -8,6 +8,8 @@ app.use(bodyParser.json());
 
 
 const JobsService = require('./services/jobsService');
+const AdminService = require('./services/adminService');
+const adminService = new AdminService();
 const jobsService = new JobsService();
 const { ErrorCodes } = require('./errors/errors');
 const { HttpErrors } = require('./errors/http/httpErrors');
@@ -18,10 +20,6 @@ const httpDefaultErrorCallback = expressResponse => error => {
     expressResponse.status(httpStatusCode).send({ code });
 };
 
-/**
- * FIX ME!
- * @returns contract by id
- */
 app.get('/contracts/:id', getProfile, (req, res) => {
     const { id } = req.params;
     const profile = req.profile;
@@ -31,7 +29,7 @@ app.get('/contracts/:id', getProfile, (req, res) => {
 });
 
 
-app.get('/contracts', getProfile, async (req, res) => {
+app.get('/contracts', getProfile, (req, res) => {
     const profile = req.profile;
     jobsService.getContractsByProfile(profile).then(result => {
         res.json(result);
@@ -39,14 +37,14 @@ app.get('/contracts', getProfile, async (req, res) => {
 });
 
 
-app.get('/jobs/unpaid', getProfile, async (req, res) => {
+app.get('/jobs/unpaid', getProfile, (req, res) => {
     const profile = req.profile;
     jobsService.getUnpaidJobsByProfile(profile).then(result => {
         res.json(result);
     }).catch(httpDefaultErrorCallback(res));
 });
 
-app.post('/jobs/:job_id/pay', getProfile, async (req, res) => {
+app.post('/jobs/:job_id/pay', getProfile, (req, res) => {
     const { job_id: jobId } = req.params;
     const profile = req.profile;
     jobsService.payJob(jobId, profile).then(result => {
@@ -54,11 +52,26 @@ app.post('/jobs/:job_id/pay', getProfile, async (req, res) => {
     }).catch(httpDefaultErrorCallback(res));
 });
 
-app.post('/balances/deposit', getProfile, async (req, res) => {
+app.post('/balances/deposit', getProfile, (req, res) => {
     const { quantity } = req.body;
     const profile = req.profile;
     jobsService.depositMoney(quantity, profile).then(result => {
         res.status(204).send();
+    }).catch(httpDefaultErrorCallback(res));
+});
+
+app.get('/admin/best-profession', (req, res) => {
+    const { start, end } = req.query;
+    adminService.getBestProfession(start, end).then(result => {
+        res.json(result);
+    }).catch(httpDefaultErrorCallback(res));
+});
+
+
+app.get('/admin/best-clients', (req, res) => {
+    const { start, end, limit } = req.query;
+    adminService.getBestClients(start, end, limit).then(result => {
+        res.json(result);
     }).catch(httpDefaultErrorCallback(res));
 });
 
