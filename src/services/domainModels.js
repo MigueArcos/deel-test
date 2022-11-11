@@ -8,6 +8,12 @@ const ContractStatusEnum = {
     New: 'new',
     InProgress: 'in_progress',
     Terminated: 'terminated'
-}
+};
 
-module.exports = { MapperProfileType, ContractStatusEnum };
+const ProfileTypeEnum = {
+    Client: 'client',
+    Contractor: 'contractor'
+};
+
+
+module.exports = { MapperProfileType, ContractStatusEnum, ProfileTypeEnum };
