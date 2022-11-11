@@ -9,6 +9,14 @@ const HttpErrors = {
         httpStatusCode: 401, 
         code: ErrorCodes.ProfileNotFound
     },
+    [ErrorCodes.InvalidQuantity]: { 
+        httpStatusCode: 400, 
+        code: ErrorCodes.InvalidQuantity
+    },
+    [ErrorCodes.DepositLimitExceeded]: { 
+        httpStatusCode: 400, 
+        code: ErrorCodes.DepositLimitExceeded
+    },
     [ErrorCodes.ContractDoesNotBelongToUser]: { 
         httpStatusCode: 403, 
         code: ErrorCodes.ContractDoesNotBelongToUser

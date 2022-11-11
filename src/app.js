@@ -54,4 +54,12 @@ app.post('/jobs/:job_id/pay', getProfile, async (req, res) => {
     }).catch(httpDefaultErrorCallback(res));
 });
 
+app.post('/balances/deposit', getProfile, async (req, res) => {
+    const { quantity } = req.body;
+    const profile = req.profile;
+    jobsService.depositMoney(quantity, profile).then(result => {
+        res.status(204).send();
+    }).catch(httpDefaultErrorCallback(res));
+});
+
 module.exports = app;

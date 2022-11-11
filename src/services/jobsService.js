@@ -85,6 +85,39 @@ class JobsService {
             throw error;
         }
     }
+
+    depositMoney = async (quantity, clientProfile) => {
+        const { Contract, Job } = sequelize.models;
+        if (clientProfile.type !== ProfileTypeEnum.Client) throw new Error(ErrorCodes.UnauthorizedProfile); // only client profile can use this endpoint
+        if (!Number.isInteger(quantity)) throw new Error(ErrorCodes.InvalidQuantity);
+        const query = await Job.findOne({
+            attributes: [ 
+                [sequelize.fn('SUM', sequelize.col('price')), 'amount_to_pay']
+            ],
+            where: {
+                paid: {
+                    [Op.is]: null
+                } 
+            },
+            include: [
+                {
+                    model: Contract,
+                    required: true,
+                    where: {
+                        [MapperProfileType.client]: clientProfile.id
+                    }
+                }
+            ],
+        });
+        const { amount_to_pay: amountToPay } = query.dataValues;
+        if (quantity > amountToPay * 0.25) throw new Error(ErrorCodes.DepositLimitExceeded);
+
+        await clientProfile.update({ 
+            balance: clientProfile.balance + quantity,
+            updatedAt: new Date()
+        });
+        return true;
+    }
 }
 
 module.exports = JobsService;
