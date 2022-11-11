@@ -8,7 +8,7 @@ class AdminService {
     getBestProfession = async (start, end) => {
         const { Contract, Job, Profile } = sequelize.models;
         if (start == undefined || end == undefined) {
-            // Default = last 3650 years (~10 years)
+            // Default = last 3650 days (~10 years)
             const endDate = new Date();
             end = endDate.toISOString();
             start = new Date(endDate.getTime() - 3650 * 24 * 60 *60 * 1000).toISOString();
@@ -51,7 +51,7 @@ class AdminService {
     getBestClients = async (start, end, limit) => {
         const { Contract, Job, Profile } = sequelize.models;
         if (start == undefined || end == undefined) {
-            // Default = last 3650 years (~10 years)
+            // Default = last 3650 days (~10 years)
             const endDate = new Date();
             end = endDate.toISOString();
             start = new Date(endDate.getTime() - 3650 * 24 * 60 *60 * 1000).toISOString();
