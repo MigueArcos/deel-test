@@ -44,4 +44,25 @@ app.get('/contracts', getProfile, async (req, res) => {
 });
 
 
+app.get('/jobs/unpaid', getProfile, async (req, res) => {
+    const { Contract, Job } = req.app.get('models');
+    const searchProperty = searchProperties[req.profile.type];
+    if (!searchProperty) return res.status(401).end(); // neither client nor contractor (Move to middleware?)
+    const jobs = await Job.findAll({ 
+        where: {
+            paid: {
+                [Op.is]: null
+            } 
+        },
+        include: [{
+            model: Contract,
+            where: {
+                [searchProperty]: req.profile.id,
+                status: 'in_progress'
+            }
+        }],
+    });
+    res.json(jobs);
+});
+
 module.exports = app;
